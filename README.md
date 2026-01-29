@@ -43,7 +43,7 @@ To prevent "starvation" (where a low-priority patient never sees the doctor), th
 ##  API Design (Endpoints & Schema)
 
 ### Data Schema (Token)
-```json
+``
 {
   "doctorId": "ObjectId",
   "slotTime": "String (e.g., 09:00-10:00)",
