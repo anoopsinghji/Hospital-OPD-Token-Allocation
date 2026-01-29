@@ -1,18 +1,15 @@
 
 
-# 🏥 Hospital OPD Token Allocation Engine
+#  Hospital OPD Token Allocation Engine
 
-> **Backend Assignment: Elastic Capacity Management System**
 
----
-
-## 📌 Project Overview
+##  Project Overview
 
 This system is a **dynamic token allocation engine** designed to manage hospital OPD queues. Unlike a simple "First-Come, First-Served" list, this engine uses a **Weighted Priority Algorithm** to handle real-world hospital chaos—such as emergencies jumping the line, paid priority patients, and doctor delays.
 
 ---
 
-## ⚙️ Core Logic & Prioritization 
+##  Core Logic & Prioritization 
 
 To balance business needs with medical urgency, I implemented a **Dynamic Scoring Formula**:
 
@@ -24,11 +21,11 @@ TotalScore = BaseWeight + WaitTimeBonus
 
 Each patient source is assigned a base priority level:
 
-- 🚨 **Emergency (1000 pts):** Immediate attention; bypasses all limits.
-- 💳 **Paid Priority (500 pts):** Higher placement for premium service.
-- 📱 **Online Booking (300 pts):** Standard scheduled appointments.
-- 🚶 **Walk-in (200 pts):** Standard on-site registration.
-- 🔄 **Follow-up (100 pts):** Brief check-ups.
+-  **Emergency (1000 pts):** Immediate attention; bypasses all limits.
+-  **Paid Priority (500 pts):** Higher placement for premium service.
+-  **Online Booking (300 pts):** Standard scheduled appointments.
+-  **Walk-in (200 pts):** Standard on-site registration.
+-  **Follow-up (100 pts):** Brief check-ups.
 
 ### 2. Anti-Starvation Rule (Fairness)
 
@@ -36,7 +33,7 @@ To prevent a "Walk-in" from waiting forever while "Priority" patients keep arriv
 
 ---
 
-## 🛠️ Handling Real-World Edge Cases 
+##  Handling Real-World Edge Cases 
 
 ### 1. Elastic Capacity Management 
 
@@ -55,7 +52,7 @@ To prevent a "Walk-in" from waiting forever while "Priority" patients keep arriv
 
 ---
 
-## 🚀 API Design 
+##  API Design 
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
@@ -65,7 +62,7 @@ To prevent a "Walk-in" from waiting forever while "Priority" patients keep arriv
 
 ---
 
-## 👨‍💻 How to Run the Simulation 
+##  How to Run the Simulation 
 
 1. **Install dependencies:**
    ```bash
@@ -89,7 +86,7 @@ To prevent a "Walk-in" from waiting forever while "Priority" patients keep arriv
 
 ---
 
-## 💡 Why I Chose This Approach (Trade-offs) 
+##  Why I Chose This Approach (Trade-offs) 
 
 I chose **Node.js/Express** for its non-blocking I/O, which is vital when multiple receptionists and doctors are updating the same queue simultaneously. While a simple array would work for small clinics, this weighted scoring system is designed to scale as hospital rules become more complex.
 
