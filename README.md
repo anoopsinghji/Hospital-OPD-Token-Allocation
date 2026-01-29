@@ -1,56 +1,56 @@
 
-
 #  Hospital OPD Token Allocation Engine
 
-
 ##  Project Overview
-
-This system is a **dynamic token allocation engine** designed to manage hospital OPD queues. Unlike a simple "First-Come, First-Served" list, this engine uses a **Weighted Priority Algorithm** to handle real-world hospital chaos—such as emergencies jumping the line, paid priority patients, and doctor delays.
+[cite_start]Design and implement a dynamic token allocation engine for hospital OPD that supports **elastic capacity management**[cite: 2, 3]. [cite_start]Unlike a simple "First-Come, First-Served" list, this engine uses a **Weighted Priority Algorithm** to handle real-world variability—such as emergencies, cancellations, and doctor delays[cite: 11, 15].
 
 ---
 
 ##  Core Logic & Prioritization 
+To balance business needs with medical urgency, the engine implements a **Dynamic Scoring Formula**:
 
-To balance business needs with medical urgency, I implemented a **Dynamic Scoring Formula**:
+$$Total Score = Base Weight + (Wait Time \times 2)$$
 
-```
-TotalScore = BaseWeight + WaitTimeBonus
-```
-
-### 1. Source Weighting (Prioritization) 
-
-Each patient source is assigned a base priority level:
-
--  **Emergency (1000 pts):** Immediate attention; bypasses all limits.
--  **Paid Priority (500 pts):** Higher placement for premium service.
--  **Online Booking (300 pts):** Standard scheduled appointments.
--  **Walk-in (200 pts):** Standard on-site registration.
--  **Follow-up (100 pts):** Brief check-ups.
+### 1. Source Weighting (Prioritization)
+[cite_start]Each patient source is assigned a base priority level[cite: 17, 27]:
+* [cite_start]**Emergency (1000 pts):** Immediate attention; bypasses all hard limits[cite: 11].
+* [cite_start]**Paid Priority (500 pts):** Higher placement for premium service[cite: 9].
+* [cite_start]**Online Booking (300 pts):** Standard scheduled appointments[cite: 7].
+* [cite_start]**Walk-in (200 pts):** Standard on-site registration[cite: 8].
+* [cite_start]**Follow-up (100 pts):** Brief check-ups for existing patients[cite: 10].
 
 ### 2. Anti-Starvation Rule (Fairness)
+To prevent "starvation" (where a low-priority patient never sees the doctor), the engine adds **+2 points for every minute** a patient waits. This ensures that a long-waiting walk-in eventually gains enough priority to be seen, even if new priority patients arrive.
 
-To prevent a "Walk-in" from waiting forever while "Priority" patients keep arriving, the engine adds **+2 points for every minute** a patient waits. Over time, a long-waiting patient's score will naturally rise to the top.
+---
+
+##  Handling Real-World Edge Cases
+
+### 1. Elastic Capacity Management
+* [cite_start]**Hard Limits:** The system enforces a per-slot maximum capacity for standard patients to prevent doctor burnout[cite: 5, 14].
+* [cite_start]**Elasticity:** The system allows **Emergency** insertions to exceed the capacity (e.g., becoming the 7th patient in a 6-person slot)[cite: 3, 11].
+
+### 2. Dynamic Reallocation
+* [cite_start]**Cancellations:** If a patient cancels, the engine marks the token as `CANCELLED` and immediately re-ranks the remaining queue to fill the gap[cite: 15, 18].
+* [cite_start]**No-Shows:** Patients not present when called are flagged, allowing the engine to proceed to the next highest-priority patient without idling[cite: 18].
+
+### 3. Failure Handling
+* [cite_start]**Global Error Middleware:** Centralized error handling for all API requests to ensure system uptime[cite: 29].
+* [cite_start]**Validation:** Strict schema validation to prevent "garbage data" from corrupting the queue logic.
 
 ---
 
-##  Handling Real-World Edge Cases 
+##  API Design (Endpoints & Schema)
 
-### 1. Elastic Capacity Management 
-
-- **Hard Limits:** Each slot has a max capacity (e.g., 6 patients/hour). The system blocks standard bookings once this is reached.
-- **Elasticity:** **Emergency** insertions are allowed to exceed the hard limit (e.g., becoming the 7th patient in a 6-person slot) to ensure life-saving care is never blocked by software constraints.
-
-### 2. Cancellations & No-Shows 
-
-- **Dynamic Reallocation:** When a patient cancels, their status is updated, and the `getNextPatient` algorithm immediately re-calculates the queue to "pull up" the next highest-scoring patient.
-- **No-Shows:** Patients who aren't present are marked as `NO_SHOW`, allowing the doctor to proceed without idling.
-
-### 3. Failure Handling 
-
-- **Input Validation:** Prevents "garbage data" from entering the engine.
-- **Global Error Middleware:** Ensures that if a calculation fails, the server sends a clean error message rather than crashing, keeping the clinic operational.
-
----
+### Data Schema (Token)
+```json
+{
+  "doctorId": "ObjectId",
+  "slotTime": "String (e.g., 09:00-10:00)",
+  "patientType": "Enum (EMERGENCY, PRIORITY, ONLINE, etc.)",
+  "status": "Enum (WAITING, ACTIVE, COMPLETED, CANCELLED)",
+  "createdAt": "Timestamp"
+}
 
 ##  API Design 
 
